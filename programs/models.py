@@ -1,3 +1,4 @@
+from django import db
 from django.db    import models
 
 from core.models  import TimeStampModel
@@ -17,7 +18,6 @@ class Program(TimeStampModel):
     limit               = models.PositiveSmallIntegerField(default=1)
     count               = models.SmallIntegerField(default=0)
     thumbnail_image_url = models.CharField(max_length=2000)
-    view                = models.SmallIntegerField(default=0)
     start_date          = models.DateTimeField()
     running_time        = models.PositiveSmallIntegerField()
     user                = models.ForeignKey('users.User', on_delete=models.CASCADE)
@@ -36,15 +36,21 @@ class DetailImage(models.Model):
 class ScreeningQuestion(models.Model):
     question = models.CharField(max_length=1000)
     program  = models.ForeignKey('Program', on_delete=models.CASCADE)
-    
 
     class Meta:
         db_table = 'screening_questions'
 
 class ScreeningAnswer(models.Model):
     answer   = models.CharField(max_length=300)
-    question = models.ForeignKey('ScreeningQuestion', on_delete=models.CASCADE)
+    question = models.OneToOneField('ScreeningQuestion', on_delete=models.CASCADE)
     user     = models.ForeignKey('users.User', on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = 'screening_answers'
+
+class Logging(TimeStampModel):
+    url     = models.CharField(max_length=2000)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = 'loggings'
