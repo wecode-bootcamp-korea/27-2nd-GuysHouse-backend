@@ -4,8 +4,9 @@ from core.models     import TimeStampModel
 from programs.models import Program
 
 class User(TimeStampModel):
+    kakao_id          = models.CharField(max_length=100, unique = True)
     nickname          = models.CharField(max_length=100)
-    email             = models.CharField(max_length=300, unique=True)
+    email             = models.CharField(max_length=300, null = True)
     profile_image_url = models.CharField(max_length=2000)
     is_host           = models.BooleanField(default=False)
     host_description  = models.CharField(max_length=300, null=True)
