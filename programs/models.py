@@ -21,10 +21,17 @@ class Program(TimeStampModel):
     start_date          = models.DateTimeField()
     running_time        = models.PositiveSmallIntegerField()
     user                = models.ForeignKey('users.User', on_delete=models.CASCADE)
-    categories          = models.ManyToManyField('Category')
+    categories          = models.ManyToManyField('Category', through='ProgramCategory')
     
     class Meta:
         db_table = 'programs'
+
+class ProgramCategory(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    
+    class Meta:
+        db_table = 'program_categories'
 
 class DetailImage(models.Model):
     image_url = models.CharField(max_length=2000)
