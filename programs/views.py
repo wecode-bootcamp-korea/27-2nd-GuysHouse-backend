@@ -1,10 +1,11 @@
-import json, boto3, uuid
+import json, uuid, datetime
 
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
 from django.views           import View
 from django.db              import transaction
 
+from django.db.models       import Q
 
 from programs.models        import DetailImage, Program, Category, ProgramCategory, ProgramQuestion, ScreeningAnswer, ScreeningQuestion
 from users.models           import User
@@ -51,3 +52,34 @@ class ProgramView(View):
 
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"},status=400)
+
+class ProgramListView(View):
+    def get(self, request):
+        category_id  = request.GET.getlist('category_id', None)
+        is_open      = request.GET.get('is_open', None)
+        sort         = request.GET.get('sort', '-created_at')
+        limit        = int(request.GET.get('limit', 100))
+        offset       = int(request.GET.get('offset', 0))
+        
+        q = Q()
+
+        if category_id:
+            q &= Q(categories__in=category_id)         
+        if is_open == 'True':
+            q &= Q(start_date__gte=datetime.datetime.now())
+        if is_open == 'False':
+            q &= Q(start_date__lt=datetime.datetime.now())
+
+        programs = Program.objects.filter(q).order_by(sort)[offset:limit+offset]
+        
+        results = [{
+            'id'                 : program.id,
+            'name'               : program.name,
+            'description'        : program.description,
+            'price'              : program.price,
+            'address'            : program.address,
+            'start_date'         : program.start_date,
+            'thumbnail_image_url': program.thumbnail_image_url,
+        } for program in programs]
+        
+        return JsonResponse({'result' : results}, status = 200)

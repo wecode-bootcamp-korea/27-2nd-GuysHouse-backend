@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'core',
     'users',
     'programs',
-    'storages',
+    # 'storages',
 ]
 
 MIDDLEWARE = [
