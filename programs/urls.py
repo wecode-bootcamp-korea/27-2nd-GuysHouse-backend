@@ -1,7 +1,8 @@
 from django.urls    import path
-from programs.views import ProgramView
+
+from programs.views import ProgramListView
 
 
 urlpatterns = [
-    path('', ProgramView.as_view()),
+    path('', ProgramListView.as_view())
 ]
