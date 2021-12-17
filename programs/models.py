@@ -1,15 +1,14 @@
-from django       import db
 from django.db    import models
 
 from core.models  import TimeStampModel
 
-class Category(models.Model):
+class Category(models.Model): 
     name = models.CharField(max_length=300)
     
-    class Meta:
+    class Meta: 
         db_table = 'categories'
 
-class Program(TimeStampModel):
+class Program(TimeStampModel): 
     name                = models.CharField(max_length=300)
     description         = models.CharField(max_length=300)
     address             = models.CharField(max_length=300)
@@ -23,41 +22,48 @@ class Program(TimeStampModel):
     user                = models.ForeignKey('users.User', on_delete=models.CASCADE)
     categories          = models.ManyToManyField('Category', through='ProgramCategory')
     
-    class Meta:
+    class Meta: 
         db_table = 'programs'
 
-class ProgramCategory(models.Model):
-    program = models.ForeignKey(Program, on_delete=models.CASCADE)
+class ProgramCategory(models.Model): 
+    program  = models.ForeignKey(Program, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     
-    class Meta:
+    class Meta: 
         db_table = 'program_categories'
 
-class DetailImage(models.Model):
+class DetailImage(models.Model): 
     image_url = models.CharField(max_length=2000)
     program   = models.ForeignKey('Program', on_delete=models.CASCADE)
 
-    class Meta:
+    class Meta: 
         db_table = 'detail_images'
 
-class ScreeningQuestion(models.Model):
+class ScreeningQuestion(models.Model): 
     question = models.CharField(max_length=1000)
-    program  = models.ForeignKey('Program', on_delete=models.CASCADE)
+    program  = models.ManyToManyField('Program', through='ProgramQuestion')
 
-    class Meta:
+    class Meta: 
         db_table = 'screening_questions'
 
-class ScreeningAnswer(models.Model):
+class ProgramQuestion(models.Model): 
+    program  = models.ForeignKey(Program, on_delete=models.CASCADE)
+    question = models.ForeignKey(ScreeningQuestion, on_delete=models.CASCADE)
+
+    class Meta: 
+        db_table = 'program_questions'
+
+class ScreeningAnswer(models.Model): 
     answer   = models.CharField(max_length=300)
     question = models.OneToOneField('ScreeningQuestion', on_delete=models.CASCADE)
     user     = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True)
 
-    class Meta:
+    class Meta: 
         db_table = 'screening_answers'
 
-class Logging(TimeStampModel):
-    previous_url     = models.CharField(max_length=2000)
-    program          = models.ForeignKey(Program, on_delete=models.CASCADE)
+class Logging(TimeStampModel): 
+    previous_url = models.CharField(max_length=2000)
+    program      = models.ForeignKey(Program, on_delete=models.CASCADE)
     
-    class Meta:
+    class Meta: 
         db_table = 'loggings'
