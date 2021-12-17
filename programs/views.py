@@ -4,7 +4,7 @@ from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
 from django.views           import View
 
-from programs.models        import DetailImage, Program, Category, ProgramCategory, ScreeningAnswer, ScreeningQuestion
+from programs.models        import DetailImage, Program, Category, ProgramCategory, QuestionAnswer, ScreeningAnswer, ScreeningQuestion, ProgramQuestion
 from users.models           import User
 from guyshouse.settings     import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_STORAGE_BUCKET_NAME, AWS_REGION
 
@@ -36,8 +36,9 @@ class ProgramView(View):
             postdata        = request.POST
 
             unique_key = put_objects(s3,thumbnail_image)
-            
-            category_list = Category.objects.filter(name__in = postdata['categories'])
+            filtered_list = [i for i in list(postdata['categories']) if i !=',']
+
+            category_list = Category.objects.filter(id__in = filtered_list)
 
             program = Program.objects.create(
                 name                = postdata['name'],
@@ -51,17 +52,61 @@ class ProgramView(View):
                 running_time        = postdata['running_time'],
                 user                = request.user
             )
-            
+
+            ProgramCategory.objects.bulk_create([ProgramCategory(program = program,category = category) for category in category_list])
+            ProgramQuestion.objects.bulk_create([ProgramQuestion(program = program, question = question) for question in ScreeningQuestion.objects.all()])
+
             for detail_image in detail_images:
                 unique_key = put_objects(s3, detail_image)
                 DetailImage.objects.create(
                     image_url = '%s.s3.%s.amazonaws.com/%s' % (AWS_STORAGE_BUCKET_NAME, AWS_REGION, unique_key),
                     program   = program
                     )
-            
-            ProgramCategory.objects.bulk_create([ProgramCategory(program=program,category=category) for category in category_list])
 
-            return JsonResponse({"MESSAGE":"SUCCESS"},status=201)
+            return JsonResponse({"message":"SUCCESS"},status=201)
 
         except KeyError:
-            return JsonResponse({"MESSAGE":"KEY_ERROR"},status=400)
+            return JsonResponse({"message":"KEY_ERROR"},status=400)
+
+class ReserveView(View):
+    @signin_check_decorator
+    def get(self, request):
+        program   = Program.objects.get(id = request.GET.get('program_id'))
+        questions = ScreeningQuestion.objects.filter(program = program)
+        results   = [
+            {
+                'question_id': question.id,
+                'context'    : question.question
+            }
+            for question in questions
+        ]
+
+        return JsonResponse({"message":results}, status = 200)
+
+    @signin_check_decorator
+    def post(self, request):
+        try :
+            data    = json.loads(request.body)
+            user    = request.user
+            program = Program.objects.get(id = data['program_id'])
+            question_list = ScreeningQuestion.objects.filter(program = program).order_by('-id')
+
+            answer_list = []
+
+            for number in range(1,5):
+                answer = ScreeningAnswer.objects.create(answer = data[f'question{number}'], user = user)
+                answer_list.append(answer)
+
+            QuestionAnswer.objects.bulk_create(
+                [
+                    QuestionAnswer(
+                        answer   = answer_list[i],
+                        question = question_list[i]
+                    )
+                for i in range(4)]
+            )
+
+            return JsonResponse({'message':'SUCCESS'}, status = 201)
+
+        except KeyError:
+            return JsonResponse({"message":"KEY_ERROR"}, status = 400)
