@@ -55,11 +55,18 @@ class ProgramQuestion(models.Model):
 
 class ScreeningAnswer(models.Model): 
     answer   = models.CharField(max_length=300)
-    question = models.OneToOneField('ScreeningQuestion', on_delete=models.CASCADE)
+    question = models.ManyToManyField('ScreeningQuestion', through='QuestionAnswer')
     user     = models.ForeignKey('users.User', on_delete=models.SET_NULL, null=True)
 
     class Meta: 
         db_table = 'screening_answers'
+
+class QuestionAnswer(models.Model):
+    question = models.ForeignKey(ScreeningQuestion, on_delete=models.CASCADE)
+    answer   = models.ForeignKey(ScreeningAnswer, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'question_answers'
 
 class Logging(TimeStampModel): 
     previous_url = models.CharField(max_length=2000)
