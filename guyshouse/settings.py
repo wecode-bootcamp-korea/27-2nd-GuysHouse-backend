@@ -171,6 +171,6 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 AWS_ACCESS_KEY_ID = os.environ['AWSAccessKeyId']
 AWS_SECRET_ACCESS_KEY = os.environ['AWSSecretKey']
-AWS_STORAGE_BUCKET_NAME = 'guyshouse'
+AWS_STORAGE_BUCKET = 'guyshouse'
 AWS_REGION = 'ap-northeast-2'
 AWS_QUERYSTRING_AUTH = False
