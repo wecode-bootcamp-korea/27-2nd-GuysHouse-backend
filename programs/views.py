@@ -1,4 +1,4 @@
-import json, uuid, datetime
+import json, uuid, datetime, boto3
 
 from django.http            import JsonResponse
 from django.core.exceptions import ValidationError
@@ -52,6 +52,23 @@ class ProgramView(View):
 
         except KeyError:
             return JsonResponse({"message":"KEY_ERROR"},status=400)
+    
+    @host_check_decorator
+    def get(self, request):
+        user     = request.user
+        offset   = request.GET.get('offset', 0)
+        limit    = request.GET.get('limit', 100)
+        programs = Program.objects.filter(user = user)[offset:offset+limit]
+        results = [
+            {
+                'name'           : program.name,
+                'description'    : program.description,
+                'address'        : program.address,
+                'thumbnail_image': program.thumbnail_image_url
+            }
+            for program in programs
+            ]
+        return JsonResponse({'result' : results}, status = 200)
 
 class ProgramListView(View):
     def get(self, request):
