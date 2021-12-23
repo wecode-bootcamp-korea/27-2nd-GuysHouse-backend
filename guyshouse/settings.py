@@ -174,3 +174,4 @@ AWS_SECRET_ACCESS_KEY = os.environ['AWSSecretKey']
 AWS_STORAGE_BUCKET = 'guyshouse'
 AWS_REGION = 'ap-northeast-2'
 AWS_QUERYSTRING_AUTH = False
+ALGORITHM = os.environ.get('ALGORITHM')
