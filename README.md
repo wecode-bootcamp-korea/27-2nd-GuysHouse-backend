@@ -23,7 +23,7 @@
 
 ## ⚙ 적용 기술
 - **Front-End** : JavaScript(ES6), React.js, StyledComponent, HTML5/CSS3
-- **Back-End** : Django(Pyhton 3.8), Myql5.7, AWS(EC2, S3, RDS), Bcrypt / JWT
+- **Back-End** : Django(Pyhton 3.8), Mysql(5.7), AWS(EC2, S3, RDS), Bcrypt / JWT
 - **Common** : Git, Github, Slack, Trello, Postman, Notion
 
 ## 🗜 [데이터베이스 Diagram(클릭 시 해당 링크로 이동합니다)](https://dbdiagram.io/d/61b6b6908c901501c0ecdb28)
