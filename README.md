@@ -19,7 +19,7 @@
 
 ## 🎬 프로젝트 구현 영상
 
-- 🔗 [영상 링크] : ![guyshouse](https://youtu.be/F6Sg-UZp1NY)
+- 🔗 [영상 링크] : ![guyshouse](<iframe width="560" height="315" src="https://www.youtube.com/embed/F6Sg-UZp1NY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>)
 
 ## ⚙ 적용 기술
 - **Front-End** : JavaScript(ES6), React.js, StyledComponent, HTML5/CSS3
