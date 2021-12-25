@@ -19,7 +19,7 @@
 
 ## 🎬 프로젝트 구현 영상
 
-- 🔗 [영상 링크] : 추후 재업데이트 예정
+- 🔗 [영상 링크] : ![guyshouse](https://youtu.be/F6Sg-UZp1NY)
 
 ## ⚙ 적용 기술
 - **Front-End** : JavaScript(ES6), React.js, StyledComponent, HTML5/CSS3
